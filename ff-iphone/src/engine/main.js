@@ -54,6 +54,7 @@
     switch (Game.state) {
       case 'title': Game.updateTitle(dt); break;
       case 'field':
+        if (Game.modal && !UI.dlg && !UI.menu) Game.modal = null;
         if (UI.dlg) UI.update(dt);
         else if (UI.menu) { UI.update(dt); }
         else { FF.Wld.update(dt); UI.update(dt); }
@@ -303,6 +304,13 @@
     Game.credT = 0;
     FF.Snd.playMusic('save');
     S.set('ending');
+    /* clôturer la scène AVANT le générique : sinon Wo.cut reste actif
+       (pause/wait à 0) et runCut ne reprend jamais au retour terrain. */
+    if (FF.Wld) FF.Wld.cut = null;
+    if (FF.UI) { FF.UI.dlg = null; FF.UI.menu = null; }
+    Game.modal = null;
+    /* persiste cleared=true pour le New Game+ (S.save lit flags.ending) */
+    try { if (FF.Save && FF.Save.save) FF.Save.save('auto'); } catch (e) { }
   };
   Game.CREDIT = [
     '', 'LES QUATRE CRISTAUX', '',
@@ -316,7 +324,12 @@
   ];
   Game.updateCredits = function (dt) {
     Game.credT += dt * (In.down('a') ? 3 : 1);
-    if (Game.credT > Game.CREDIT.length * 1.05 + 6) { Game.state = 'field'; G.fadeTo(0, 1); }
+    if (Game.credT > Game.CREDIT.length * 1.05 + 6) {
+      Game.state = 'field';
+      if (FF.Wld) FF.Wld.cut = null;
+      G.fadeTo(0, 1);
+      try { FF.Snd.playMusic((Wo.map && Wo.map.music) || 'world'); } catch (e) { }
+    }
   };
   Game.drawCredits = function () {
     G.clear('#000');
@@ -366,11 +379,10 @@
   };
 
   /* ---------------- sauvegarde rapide + per-sistance ---------------- */
-  Game.savePrefs = function () { U.store.set('q4c.settings', S.settings); };
+  Game.savePrefs = function () { if (FF.Prefs && FF.Prefs.save) return FF.Prefs.save(); S.saveSettings(); };
   Game.loadPrefs = function () {
-    /* recharge les préférences d'appareil persistées (q4c.settings) dans S.settings.
-       l'audio gère ses propres préférences (q4c.audio) dans Snd.init. */
-    S.loadSettings();
+    if (FF.Prefs && FF.Prefs.load) FF.Prefs.load();
+    else S.loadSettings();
   };
   Game.autoSave = function () {
     if (!S.order || !S.order.length) return;

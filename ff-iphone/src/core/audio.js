@@ -38,12 +38,28 @@
   };
   S.isUnlocked = function () { return unlocked; };
 
-  S.loadPrefs = function () {
-    var p = U.store.get('q4c.audio', null);
-    if (p) { state.muted = !!p.muted; state.vol = p.vol != null ? p.vol : 0.6; state.musVol = p.musVol != null ? p.musVol : 0.5; state.sfxVol = p.sfxVol != null ? p.sfxVol : 0.9; }
-    if (AC) { master.gain.value = state.muted ? 0 : state.vol; mus.gain.value = state.musVol; sfxBus.gain.value = state.sfxVol; }
+  S.applyPrefs = function (p) {
+    p = p || {};
+    if (p.muted != null) state.muted = !!p.muted;
+    if (p.vol != null) state.vol = p.vol;
+    if (p.musVol != null) state.musVol = p.musVol;
+    if (p.sfxVol != null) state.sfxVol = p.sfxVol;
+    if (AC) {
+      master.gain.value = state.muted ? 0 : state.vol;
+      mus.gain.value = state.musVol;
+      sfxBus.gain.value = state.sfxVol;
+    }
   };
-  S.savePrefs = function () { U.store.set('q4c.audio', { muted: state.muted, vol: state.vol, musVol: state.musVol, sfxVol: state.sfxVol }); };
+  S.loadPrefs = function () {
+    var a = null;
+    if (FF.Prefs && FF.Prefs.load) a = FF.Prefs.load().audio;
+    else a = U.store.get('q4c.audio', null);
+    if (a) S.applyPrefs(a);
+  };
+  S.savePrefs = function () {
+    if (FF.Prefs && FF.Prefs.save) { FF.Prefs.save(); return; }
+    U.store.set('q4c.audio', { muted: state.muted, vol: state.vol, musVol: state.musVol, sfxVol: state.sfxVol });
+  };
   S.setVol = function (k, v) { state[k] = v; if (AC) { if (k === 'vol') master.gain.value = state.muted ? 0 : v; if (k === 'musVol') mus.gain.value = v; if (k === 'sfxVol') sfxBus.gain.value = v; } S.savePrefs(); };
   S.toggleMute = function () { state.muted = !state.muted; if (AC) master.gain.value = state.muted ? 0 : state.vol; S.savePrefs(); return state.muted; };
 

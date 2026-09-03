@@ -3,13 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "node tools/headless-test.js && node tools/phaseA-test.js && node tools/boot-prefs-test.js && node tools/audio-gesture-test.js && node tools/ngplus-test.js && node tools/parcours-test.js && node tools/economy-audit.js",
+    "test": "node tools/headless-test.js && node tools/phaseA-test.js && node tools/boot-prefs-test.js && node tools/prefs-test.js && node tools/audio-gesture-test.js && node tools/ngplus-test.js && node tools/parcours-test.js && node tools/credits-test.js && node tools/encounters-test.js && node tools/chapters-test.js && node tools/economy-audit.js",
     "test:headless": "node tools/headless-test.js",
     "test:phaseA": "node tools/phaseA-test.js",
     "test:reload": "node tools/boot-prefs-test.js",
+    "test:prefs": "node tools/prefs-test.js",
     "test:audio": "node tools/audio-gesture-test.js",
     "test:ngplus": "node tools/ngplus-test.js",
     "test:parcours": "node tools/parcours-test.js",
+    "test:credits": "node tools/credits-test.js",
+    "test:encounters": "node tools/encounters-test.js",
+    "test:chapters": "node tools/chapters-test.js",
     "test:economy": "node tools/economy-audit.js",
     "test:browser": "node tools/smoke-browser.js",
     "serve": "python3 -m http.server 8123 --directory ff-iphone"

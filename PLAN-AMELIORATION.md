@@ -101,11 +101,11 @@ La **Phase A** ci-dessous a été **implémentée et validée** (suite headless 
     - **Dirigeable** : embarquement refusé sans la Nacelle (reste `mode foot`), embarquement `→ ship` avec la nacelle, débarquement permis sur terrain ouvert (`→ foot`) mais **refusé sur montagne** (mode ship conservé).
     - Boutique / auberge / menus / cristal étaient déjà couverts par `headless-test.js`.
 
-### Phase D — Qualité d'ingénierie (dette technique)
-13. **Découpage** : les IIFE géants (`battle.js` 1 044 L, `ui.js` 722 L, `bake.js` 783 L, `world.js` 545 L) restent lisibles mais durs à tester unitairement — extraire les fonctions pures (règles de dégâts, tables, formatage) et garder la couche « contenu » séparée (déjà le cas : `data/`).
-14. **Un seul point de persistance** : passer les 2-3 clés `q4c.*` à un petit module `prefs` avec `load/save/apply`, testable.
-15. **Garde-fous globaux** : s'assurer que `Wo.update` et le rendu ne dépendent plus d'un `Wo.cut` bloquant, et centraliser `modal` (le code a déjà un correctif de secours à `ui.js` — le généraliser).
-16. **Commentaire/documentation** : un `ARCHITECTURE.md` court pour qu'un nouveau lecteur repère `core / data / engine`.
+### Phase D — Qualité d'ingénierie — ✔ FAIT (sauf découpage des IIFE)
+13. **Découpage** des IIFE géants (`battle.js`, `ui.js`, `bake.js`) : **reporté** — trop risqué pour le combat ; le contenu reste déjà isolé dans `data/`.
+14. **Un seul point de persistance** — `FF.Prefs` (`save.js`) : blob `q4c.prefs` `{settings, audio}`, `load/save/apply`, migration depuis `q4c.settings` / `q4c.audio` (miroirs encore écrits). Test `tools/prefs-test.js`.
+15. **Garde-fous** : cutteur inerte > 1 s clôturé (`world.js`) ; `Game.modal` remis à `null` si plus de dlg/menu (`main.js`).
+16. **`ARCHITECTURE.md`** + README réel. Sondes mortes `tools/mini*` `snip-*` `probe*` `xref*` et l’archive workspace retirées.
 
 ---
 

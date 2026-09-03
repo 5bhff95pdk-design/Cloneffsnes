@@ -132,7 +132,7 @@ try {
   const fontSrc = fs.readFileSync(path.join(ROOT, 'core/font.js'), 'utf8');
   if (fontSrc.indexOf('\\u25BC') < 0) out.bad.push('FONT ▼ (U+25BC) absent du SET');
   if (fontSrc.indexOf('\\u25B6') < 0) out.bad.push('FONT ▶ (U+25B6) absent du SET');
-  ['manifest.webmanifest', 'assets/icon-180.png', 'assets/icon-512.png'].forEach(function (f) {
+  ['manifest.webmanifest', 'assets/icon-180.png', 'assets/icon-512.png', 'sw.js'].forEach(function (f) {
     if (!fs.existsSync(path.join(__dirname, '..', 'ff-iphone', f))) out.bad.push('PWA manquant : ' + f);
   });
   console.log(JSON.stringify(out, null, 1));
