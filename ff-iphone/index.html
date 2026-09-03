@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05070f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cristaux">
+<meta name="description" content="Les Quatre Cristaux — RPG 16-bit jouable sur iPhone (mode hors-ligne, sauvegardes locales).">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" sizes="512x512" href="assets/icon-512.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Les Quatre Cristaux</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="240" height="160"></canvas>
+  <div id="scanlines"></div>
+  <div id="rotate">Tourne l'appareil<br><span>ou pivote vers le haut du paysage pour une meilleure vue</span></div>
+</div>
+
+<div id="touch">
+  <div id="dpad" data-zone="dpad">
+    <button class="dbtn" data-k="up"    style="--a:0deg"></button>
+    <button class="dbtn" data-k="right"  style="--a:90deg"></button>
+    <button class="dbtn" data-k="down"   style="--a:180deg"></button>
+    <button class="dbtn" data-k="left"   style="--a:-90deg"></button>
+    <div class="dcross"></div>
+  </div>
+  <div id="acts">
+    <button class="abtn big" data-k="a">A</button>
+    <button class="abtn"     data-k="b">B</button>
+    <button class="abtn small" data-k="menu">MENU</button>
+    <button class="abtn small" data-k="turbo">TURBO</button>
+  </div>
+</div>
+
+<div id="boot">
+  <div class="boot-inner">
+    <div class="boot-crystal"></div>
+    <p class="boot-t">LES QUATRE CRISTAUX</p>
+    <p class="boot-s">un RPG 16-bit — chargement…</p>
+    <button id="boot-go">TOUCHEZ POUR COMMENCER</button>
+    <p class="boot-h">Plein écran : Partager ▸ « Ajouter à l'écran d'accueil »</p>
+  </div>
+</div>
+
+<noscript>Ce jeu a besoin de JavaScript.</noscript>
+
+<script src="src/core/util.js"></script>
+<script src="src/core/font.js"></script>
+<script src="src/core/gfx.js"></script>
+<script src="src/core/input.js"></script>
+<script src="src/core/audio.js"></script>
+<script src="src/core/sprites.js"></script>
+<script src="src/data/tables.js"></script>
+<script src="src/data/monsters.js"></script>
+<script src="src/data/story.js"></script>
+<script src="src/data/maps.js"></script>
+<script src="src/engine/save.js"></script>
+<script src="src/engine/bake.js"></script>
+<script src="src/engine/assets.js"></script>
+<script src="src/engine/dungeon.js"></script>
+<script src="src/engine/party.js"></script>
+<script src="src/engine/battle.js"></script>
+<script src="src/engine/ui.js"></script>
+<script src="src/engine/world.js"></script>
+<script src="src/engine/main.js"></script>
+</body>
+</html>

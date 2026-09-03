@@ -1,0 +1,71 @@
+
+added 2 packages in 2s
+BEWARE: your OS is not officially supported by Playwright; downloading fallback build for ubuntu20.04-x64.
+Downloading Chromium 131.0.6778.33 (playwright build v1148) from https://playwright.azureedge.net/builds/chromium/1148/chromium-linux.zip
+|                                                                                |   0% of 161.3 MiB
+|■■■■■■■■                                                                        |  10% of 161.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 161.3 MiB
+Chromium 131.0.6778.33 (playwright build v1148) downloaded to /home/user/.cache/ms-playwright/chromium-1148
+BEWARE: your OS is not officially supported by Playwright; downloading fallback build for ubuntu20.04-x64.
+Downloading FFMPEG playwright build v1010 from https://playwright.azureedge.net/builds/ffmpeg/1010/ffmpeg-linux.zip
+|                                                                                |   0% of 2.3 MiB
+|■■■■■■■■                                                                        |  10% of 2.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+FFMPEG playwright build v1010 downloaded to /home/user/.cache/ms-playwright/ffmpeg-1010
+BEWARE: your OS is not officially supported by Playwright; downloading fallback build for ubuntu20.04-x64.
+Downloading Chromium Headless Shell 131.0.6778.33 (playwright build v1148) from https://playwright.azureedge.net/builds/chromium/1148/chromium-headless-shell-linux.zip
+|                                                                                |   0% of 100.9 MiB
+|■■■■■■■■                                                                        |  10% of 100.9 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 100.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 100.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 100.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 100.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 100.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 100.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 100.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 100.9 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 100.9 MiB
+Chromium Headless Shell 131.0.6778.33 (playwright build v1148) downloaded to /home/user/.cache/ms-playwright/chromium_headless_shell-1148
+Playwright Host validation warning: 
+╔══════════════════════════════════════════════════════╗
+║ Host system is missing dependencies to run browsers. ║
+║ Please install them with the following command:      ║
+║                                                      ║
+║     sudo npx playwright install-deps                 ║
+║                                                      ║
+║ Alternatively, use apt:                              ║
+║     sudo apt-get install libnss3\                    ║
+║         libnspr4\                                    ║
+║         libatk1.0-0\                                 ║
+║         libatk-bridge2.0-0\                          ║
+║         libcups2\                                    ║
+║         libxdamage1\                                 ║
+║         libxkbcommon0\                               ║
+║         libasound2\                                  ║
+║         libatspi2.0-0                                ║
+║                                                      ║
+║ <3 Playwright Team                                   ║
+╚══════════════════════════════════════════════════════╝
+    at validateDependenciesLinux (/home/user/node_modules/playwright-core/lib/server/registry/dependencies.js:216:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Registry._validateHostRequirements (/home/user/node_modules/playwright-core/lib/server/registry/index.js:753:43)
+    at async Registry._validateHostRequirementsForExecutableIfNeeded (/home/user/node_modules/playwright-core/lib/server/registry/index.js:851:7)
+    at async Registry.validateHostRequirementsForExecutablesIfNeeded (/home/user/node_modules/playwright-core/lib/server/registry/index.js:840:43)
+    at async t.<anonymous> (/home/user/node_modules/playwright-core/lib/cli/program.js:137:7)
+DONE

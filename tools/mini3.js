@@ -1,0 +1,27 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch();
+ const ctx=await b.newContext({viewport:{width:844,height:390},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+ const p=await ctx.newPage();
+ const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text().slice(0,160));});
+ await p.goto('http://127.0.0.1:4178/ff-iphone/index.html');await p.waitForTimeout(1200);
+ await p.evaluate(()=>{FF.Game.newGame();});
+ await p.waitForTimeout(1400);
+ for(let i=0;i<26;i++){await p.evaluate(()=>{if(FF.UI.dlg)FF.In.force('a');});await p.waitForTimeout(90);}
+ await p.screenshot({path:'/home/user/shots/l-01-titre.png'});
+ await p.evaluate(()=>{FF.Game.noEnc=true;FF.Wld.cut=null;FF.UI.dlg=null;FF.Game.modal=null;FF.Wld.enter('aurelia',12,13,'down');});
+ await p.waitForTimeout(500); await p.screenshot({path:'/home/user/shots/l-02-ville.png'});
+ await p.evaluate(()=>{FF.UI.openMenu();FF.UI.openSub('item');}); await p.waitForTimeout(300); await p.screenshot({path:'/home/user/shots/l-03-objets.png'});
+ await p.evaluate(()=>{FF.UI.close();FF.UI.shop({shop:'aurelia',kind:'obj'});}); await p.waitForTimeout(300); await p.screenshot({path:'/home/user/shots/l-04-boutique.png'});
+ await p.evaluate(()=>{FF.UI.close();FF.Game.battle({foes:['grogne','araignee','squele'],bg:'cave',music:'battle',name:'embuscade'});});
+ await p.waitForTimeout(1500); await p.screenshot({path:'/home/user/shots/l-05-combat.png'});
+ await p.evaluate(()=>{if(FF.Bat.st){FF.Bat.st.mode='cmd';FF.Bat.st.actor=FF.Bat.st.allies[0];FF.Bat.st.cursor=1;}});
+ await p.waitForTimeout(300); await p.screenshot({path:'/home/user/shots/l-06-combat-menu.png'});
+ await p.evaluate(()=>{if(FF.Bat.st){FF.Bat.st.mode='win';FF.Bat.st.showResult=1;FF.Bat.st.t=2;FF.Bat.st.result={exp:1240,gil:640,drops:['hipotion'],levels:[{id:'arno',name:'Arno',ups:[{lv:12,pv:14,pm:3,learned:['feu']}]}],mon:['grogne','araignee','squele']};}});
+ await p.waitForTimeout(400); await p.screenshot({path:'/home/user/shots/l-07-victoire.png'});
+ await p.evaluate(()=>{ if(FF.Bat.st){FF.Bat.st=null;} FF.Game.state='field'; FF.UI.close(); const m=FF.D.MAPS.sanctuaire_1; FF.Wld.enter('sanctuaire_1',m.entry.x,m.entry.y,'up');});
+ await p.waitForTimeout(600); await p.screenshot({path:'/home/user/shots/l-08-donjon.png'});
+ await p.evaluate(()=>{FF.Wld.enter('cendre',13,6,'down');}); await p.waitForTimeout(500); await p.screenshot({path:'/home/user/shots/l-09-lave.png'});
+ await p.evaluate(()=>{FF.S.ship=1;FF.S.set('ship');FF.Wld.enter('world',28,12,'down');FF.Wld.board();}); await p.waitForTimeout(700); await p.screenshot({path:'/home/user/shots/l-10-navire.png'});
+ console.log('canvas:',JSON.stringify(await p.evaluate(()=>{const r=document.getElementById('game').getBoundingClientRect();return {w:Math.round(r.width),h:Math.round(r.height),vw:innerWidth,vh:innerHeight,cls:document.body.className};})));
+ console.log(errs.length?'ERREURS: '+errs.slice(0,6).join(' ;; '):'RAS');
+ await b.close();})();

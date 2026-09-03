@@ -1,0 +1,127 @@
+:root{
+  --bg:#05070f; --pad:#ffffff; --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{
+  margin:0; padding:0; height:100%; width:100%; overflow:hidden; background:var(--bg);
+  font-family:-apple-system,"SF Pro Text",system-ui,sans-serif; color:#cfd6ea;
+  -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  overscroll-behavior:none; touch-action:none;
+}
+body{ display:flex; flex-direction:column; padding:0 var(--safe-l) 0 var(--safe-r); }
+
+#stage{
+  position:relative; flex:1 1 auto; min-height:0; width:100%;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(120% 100% at 50% 0%,#0d1330 0%,#05070f 70%);
+}
+#game{
+  display:block; image-rendering:pixelated; image-rendering:crisp-edges;
+  background:#05070f; box-shadow:0 0 0 1px #24305a, 0 18px 40px -12px #000;
+  touch-action:none;
+}
+#scanlines{
+  position:absolute; inset:0; pointer-events:none; opacity:0;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,.35) 0 1px,transparent 1px 3px);
+}
+body.fx-scan #scanlines{opacity:.5}
+body.fx-vig #stage{box-shadow:inset 0 0 120px 30px rgba(0,0,0,.65)}
+
+#rotate{display:none}
+body.pad-side #touch{
+  position:fixed; inset:0; pointer-events:none; background:transparent; border-top:0; padding:0;
+}
+body.pad-side #dpad{
+  position:absolute; left:max(6px, calc((100vw - var(--gw, 480px)) / 2 - 178px)); top:50%;
+  transform:translateY(-50%) scale(var(--padscale,1)); transform-origin:left center; opacity:.85;
+}
+body.pad-side #acts{
+  position:absolute; right:max(6px, calc((100vw - var(--gw, 480px)) / 2 - 158px)); left:auto; top:50%;
+  transform:translateY(-50%) scale(var(--padscale,1)); transform-origin:right center;
+  flex-direction:column; align-items:flex-end; max-width:none; opacity:.9;
+}
+body.pad-overlay #touch{
+  position:fixed; left:0; right:0; bottom:0; pointer-events:none;
+  background:transparent; border-top:0; padding:8px 12px calc(10px + var(--safe-b));
+  opacity:.9;
+}
+body.pad-overlay #touch .dbtn, body.pad-overlay #touch .abtn, body.pad-overlay #dpad .dcross{pointer-events:auto}
+body.pad-overlay #dpad{opacity:.72}
+body.pad-overlay #acts{opacity:.8}
+body.pad-overlay #stage{padding-bottom:0}
+
+/* ---------- touch controls ---------- */
+#touch{
+  flex:0 0 auto; display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:10px 14px calc(14px + var(--safe-b));
+  background:linear-gradient(180deg,#0a0f22,#05070f);
+  border-top:1px solid #1b2444;
+}
+#dpad{
+  position:relative; width:170px; height:170px; flex:0 0 auto;
+  transform:scale(var(--padscale,1)); transform-origin:center left;
+}
+.dcross{
+  position:absolute; inset:52px; background:rgba(255,255,255,.06);
+  border-radius:10px; pointer-events:none;
+}
+.dbtn{
+  position:absolute; inset:0; width:58px; height:64px; border:0; padding:0;
+  background:transparent; transform-origin:50% 133%; transform:rotate(var(--a));
+  clip-path:polygon(30% 0,70% 0,100% 100%,0 100%);
+}
+.dbtn::after{
+  content:''; position:absolute; left:50%; top:8px; width:12px; height:12px;
+  transform:translateX(-50%) rotate(45deg); border:2px solid rgba(255,255,255,.55);
+  border-bottom:0; border-right:0;
+}
+.dbtn.on{background:rgba(120,170,255,.25)}
+#acts{display:flex; flex-wrap:wrap; gap:10px 12px; justify-content:flex-end; max-width:230px;
+  transform:scale(var(--padscale,1)); transform-origin:center right;}
+.abtn{
+  border:2px solid rgba(255,255,255,.35); border-radius:14px; background:rgba(255,255,255,.07);
+  color:#e7edff; font-weight:700; letter-spacing:.06em; height:60px; width:60px; font-size:17px;
+}
+.abtn.big{width:76px;height:76px;font-size:20px;background:rgba(90,150,255,.20);border-color:#7fb0ff}
+.abtn.small{width:auto;height:38px;padding:0 12px;font-size:12px;border-radius:10px}
+.abtn.on{background:rgba(255,220,120,.3);transform:translateY(1px)}
+body.pad-hidden #touch{display:none}
+body.compact #dpad{--padscale:.82}
+@media (max-height:430px){
+  #touch{padding:4px 10px 6px}
+  #dpad{width:124px;height:124px}
+  .dcross{inset:38px}
+  .dbtn{height:48px;transform-origin:50% 96px}
+  .abtn{height:44px;width:44px;font-size:14px}
+  .abtn.big{height:56px;width:56px}
+  body.compact #dpad{--padscale:.7}
+}
+@media (orientation:landscape) and (max-height:500px){
+  body{flex-direction:row}
+  #touch{flex-direction:column; align-items:center; justify-content:space-between;
+    border-top:0; border-left:1px solid #1b2444; padding:8px calc(10px + var(--safe-r)) 8px 10px}
+  #acts{flex-direction:column; align-items:flex-end; max-width:none}
+}
+
+/* ---------- boot ---------- */
+#boot{
+  position:fixed; inset:0; z-index:9; display:flex; align-items:center; justify-content:center;
+  background:#04060e; text-align:center; transition:opacity .5s ease; padding:24px;
+}
+#boot.gone{opacity:0; pointer-events:none}
+.boot-crystal{
+  width:56px;height:56px;margin:0 auto 22px;
+  background:conic-gradient(from 220deg,#6fe3ff,#8b6bff,#ff7bd5,#6fe3ff);
+  clip-path:polygon(50% 0,100% 35%,74% 100%,26% 100%,0 35%);
+  box-shadow:0 0 44px rgba(120,140,255,.5); animation:spin 5s linear infinite;
+}
+@keyframes spin{to{filter:hue-rotate(360deg)}}
+.boot-t{font-size:20px;font-weight:800;letter-spacing:.22em;color:#eaf0ff;margin:0}
+.boot-s{font-size:12px;opacity:.65;margin:8px 0 26px;letter-spacing:.1em}
+#boot-go{
+  font:inherit;font-size:13px;font-weight:700;letter-spacing:.14em;color:#0a0f22;background:#e8f0ff;
+  border:0;border-radius:10px;padding:14px 22px; animation:pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse{50%{opacity:.55}}
+.boot-h{font-size:11px;opacity:.45;margin-top:26px;line-height:1.6}
