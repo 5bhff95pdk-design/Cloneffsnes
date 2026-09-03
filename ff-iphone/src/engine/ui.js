@@ -541,20 +541,22 @@
             { t: 'Rencontres : ' + (st.encounters ? 'OUI' : 'NON'), k: 'enc' },
             { t: 'Vitesse de texte : ' + ({ .5: 'LENTE', 1: 'NORMALE', 2: 'RAPIDE', 4: 'TRÈS RAPIDE' }[st.textSpeed] || 'NORMALE'), k: 'spd' },
             { t: 'Secousses : ' + (st.shake ? 'OUI' : 'NON'), k: 'shake' },
-            { t: 'Scanlines : ' + (st.scan ? 'OUI' : 'NON'), k: 'scan' },
-            { t: 'Masquer les boutons tactiles : OUI/NON', k: 'pad' },
+            { t: 'Scanlines : ' + (st.scan === 0 ? 'NON' : 'OUI'), k: 'scan' },
+            { t: 'Vignette : ' + (st.vig === 0 ? 'NON' : 'OUI'), k: 'vig' },
+            { t: 'Masquer les boutons tactiles : ' + (st.padHidden ? 'OUI' : 'NON'), k: 'pad' },
             { t: 'Musique : ' + (FF.Snd.settings.muted ? 'COUPÉE' : 'ON'), k: 'mute' },
             { t: 'Volume musique : ' + Math.round(FF.Snd.settings.musVol * 100) + '%', k: 'mus' },
             { t: 'Volume effets : ' + Math.round(FF.Snd.settings.sfxVol * 100) + '%', k: 'sfx' },
             { t: 'Charger une partie', k: 'load' },
             { t: 'Retour', k: 'x' }
-          ], x: 20, y: 10, w: 200, h: 10 * 12 + 8, per: 10,
+          ], x: 20, y: 10, w: 200, h: 11 * 12 + 8, per: 11,
           onSel: function (o) {
             if (o.k === 'enc') st.encounters = st.encounters ? 0 : 1;
             else if (o.k === 'spd') st.textSpeed = ({ .5: 1, 1: 2, 2: 4, 4: .5 })[st.textSpeed] || 1;
             else if (o.k === 'shake') st.shake = st.shake ? 0 : 1;
-            else if (o.k === 'scan') { st.scan = st.scan ? 0 : 1; document.body.classList.toggle('fx-scan', !!st.scan); }
-            else if (o.k === 'pad') { st.padHidden = !st.padHidden; document.body.classList.toggle('pad-hidden', !!st.padHidden); }
+            else if (o.k === 'scan') st.scan = st.scan === 0 ? 1 : 0;
+            else if (o.k === 'vig') st.vig = st.vig === 0 ? 1 : 0;
+            else if (o.k === 'pad') st.padHidden = !st.padHidden;
             else if (o.k === 'mute') FF.Snd.toggleMute();
             else if (o.k === 'mus') FF.Snd.setVol('musVol', (FF.Snd.settings.musVol + .25) % 1.25);
             else if (o.k === 'sfx') FF.Snd.setVol('sfxVol', (FF.Snd.settings.sfxVol + .25) % 1.25);
@@ -562,7 +564,7 @@
             else if (o.k === 'x') { UI.closeMenu(); return; }
             FF.Save.savePrefs && FF.Save.savePrefs();
             FF.Snd.savePrefs();
-            FF.Gfx.resize();
+            if (FF.Game && FF.Game.applyFx) FF.Game.applyFx(); else FF.Gfx.resize();
             refresh();
           }
         })

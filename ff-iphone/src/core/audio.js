@@ -27,6 +27,17 @@
     } catch (e) { return false; }
   };
   S.resume = function () { if (!AC) S.init(); if (AC && AC.state === 'suspended') AC.resume(); };
+  /* à appeler depuis un geste utilisateur RÉEL : c'est la seule façon de débloquer
+     l'audio sur iOS. Initialise le contexte, le reprend, et le signale. */
+  var unlocked = false;
+  S.unlock = function () {
+    if (!AC) S.init();
+    if (AC && AC.state === 'suspended') { try { AC.resume(); } catch (e) { } }
+    unlocked = !!AC;
+    return !!AC;
+  };
+  S.isUnlocked = function () { return unlocked; };
+
   S.loadPrefs = function () {
     var p = U.store.get('q4c.audio', null);
     if (p) { state.muted = !!p.muted; state.vol = p.vol != null ? p.vol : 0.6; state.musVol = p.musVol != null ? p.musVol : 0.5; state.sfxVol = p.sfxVol != null ? p.sfxVol : 0.9; }

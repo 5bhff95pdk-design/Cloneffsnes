@@ -229,6 +229,37 @@
     S.settings.fx = detectFx();
     return S;
   };
+
+  /* --------- New Game + (les crédits annoncent « reprend vos niveaux ») --------- */
+  /* capture ce qui doit survivre à une reprise : niveaux & maîtrises d'emploi des
+     trois héros fondateurs, emplois débloqués, esprits liés, sorts offerts. */
+  P.captureCarry = function () {
+    var mains = {};
+    ['arno', 'myrelle', 'sica'].forEach(function (id) {
+      var m = S.members[id];
+      if (m) mains[id] = { lv: m.lv, jlv: Object.assign({}, m.jlv || {}), gifted: (m.gifted || []).slice() };
+    });
+    return { mains: mains, jobs: Object.keys(S.jobs || {}), summons: Object.keys(S.summons || {}) };
+  };
+  /* démarre une toute nouvelle partie puis réapplique le carry (niveaux conservés). */
+  P.newGameCarry = function (c) {
+    P.newGame();
+    c = c || { mains: {}, jobs: [], summons: [] };
+    /* on restaure d'abord emplois & esprits pour que recalc réapprenne les sorts liés */
+    (c.jobs || []).forEach(function (j) { S.jobs[j] = 1; });
+    (c.summons || []).forEach(function (s) { S.summons[s] = 1; });
+    ['arno', 'myrelle', 'sica'].forEach(function (id) {
+      var m = S.members[id], c2 = c.mains && c.mains[id];
+      if (!m || !c2 || !c2.lv) return;
+      m.lv = Math.max(1, c2.lv);
+      m.jlv = Object.assign({}, c2.jlv);
+      m.gifted = (c2.gifted || []).slice();
+      recalc(m);
+      m.hp = m.stats.pv; m.mp = m.stats.pm;
+    });
+    S.set('ngp');   /* marque cette run comme une Nouvelle Partie + */
+    return S;
+  };
   function detectFx() {
     try { return (window.devicePixelRatio || 1) > 2 ? 'auto' : 'none'; } catch (e) { return 'none'; }
   }
