@@ -95,9 +95,16 @@
     if (In.tap('down', [.25, .12])) Game.titleIdx = (Game.titleIdx + 1) % opts.length;
     if (In.pressed('a')) { Game.titlePick(opts[Game.titleIdx]); }
   };
+  /* casiers dont la partie est ALLÉE AU BOUT (le New Game + repose dessus) */
+  Game.clearedSlots = function () {
+    return ['1', '2', '3', 'auto'].filter(function (k) {
+      try { var m = FF.Save.meta(k); return !!(m && m.cleared); } catch (e) { return false; }
+    });
+  };
   Game.titleOpts = function () {
     var o = [];
     o.push({ t: 'NOUVELLE PARTIE', k: 'new' });
+    if (Game.clearedSlots().length) o.push({ t: 'NOUVELLE PARTIE + (niveaux conservés)', k: 'ngp' });
     var any = ['1', '2', '3', 'auto'].some(function (k) { try { return !!FF.Save.meta(k); } catch (e) { return false; } });
     if (any) o.push({ t: 'CONTINUER', k: 'continue' });
     o.push({ t: 'SALON DES CRISTAUX (choix du casier)', k: 'load' });
@@ -108,6 +115,7 @@
     if (!o) return;
     FF.Snd.play('ok');
     if (o.k === 'new') { Game.newGame(); }
+    else if (o.k === 'ngp') { Game.newGamePlus(); }
     else if (o.k === 'continue') {
       var pick = ['1', '2', '3', 'auto'].filter(function (k) { return !!FF.Save.meta(k); })[0];
       if (FF.Save.load(pick)) Game.reload();
@@ -144,7 +152,7 @@
     G.text('un conte de 16 bits, pour iPhone', G.W / 2, 70, { align: 'center', color: '#9fb3ff' });
     /* menu */
     var opts = Game.titleOpts();
-    var yy = 112;
+    var yy = opts.length >= 5 ? 92 : 112;
     opts.forEach(function (o, i) {
       G.text(o.t, G.W / 2, yy + i * 12, { align: 'center', color: i === Game.titleIdx ? '#ffe66e' : '#cfd8e6' });
     });
@@ -167,6 +175,10 @@
   /* ---------------- NOUVELLE PARTIE ---------------- */
   Game.newGame = function () {
     FF.P.newGame();
+    Game.beginNewRun();
+  };
+  /* début d'une run : pose le joueur à Aurélia puis lance la scène d'intro */
+  Game.beginNewRun = function () {
     Game.state = 'field';
     UI.menu = null; UI.dlg = null;
     Game.noEnc = true;
@@ -174,6 +186,19 @@
     Wo.placeT = 0;
     G.fx.fade = 1; G.fadeTo(0, 1.6);
     setTimeout(function () { FF.Wld.play(D.STARTSCENE, function () { Game.noEnc = false; }); }, 250);
+  };
+  /* Nouvelle Partie + : reprend les niveaux/emplois/esprits d'une partie finie */
+  Game.newGamePlus = function () {
+    var slots = Game.clearedSlots();
+    if (!slots.length) { Game.newGame(); return; }
+    /* on prend la partie finie la plus avancée (plus haute somme de niveaux) */
+    var best = slots.slice().sort(function (a, b) { return ((FF.Save.meta(b) || {}).lv || 0) - ((FF.Save.meta(a) || {}).lv || 0); })[0];
+    var carried = null;
+    if (FF.Save.load(best)) carried = FF.P.captureCarry();
+    if (!carried) { Game.newGame(); return; }
+    FF.P.newGameCarry(carried);
+    Game.beginNewRun();
+    FF.Save.save('auto');
   };
   Game.reload = function () {
     Game.state = 'field';
@@ -343,13 +368,9 @@
   /* ---------------- sauvegarde rapide + per-sistance ---------------- */
   Game.savePrefs = function () { U.store.set('q4c.settings', S.settings); };
   Game.loadPrefs = function () {
+    /* recharge les préférences d'appareil persistées (q4c.settings) dans S.settings.
+       l'audio gère ses propres préférences (q4c.audio) dans Snd.init. */
     S.loadSettings();
-    var p = U.store.get('q4c.settings', null);
-    if (p && FF.Snd.settings) {
-      if (p.muted != null) FF.Snd.settings.muted = p.muted;
-      if (p.musVol != null) FF.Snd.settings.musVol = p.musVol;
-      if (p.sfxVol != null) FF.Snd.settings.sfxVol = p.sfxVol;
-    }
   };
   Game.autoSave = function () {
     if (!S.order || !S.order.length) return;
@@ -395,9 +416,9 @@
   var Game = FF.Game;
   var started = false;
   function applyFx() {
-    var st = FF.S.settings;
+    var st = FF.S.settings || {};
     document.body.classList.toggle('fx-scan', st.scan !== 0);
-    document.body.classList.toggle('fx-vig', st.scan !== 0);
+    document.body.classList.toggle('fx-vig', st.vig !== 0);
     document.body.classList.toggle('pad-hidden', !!st.padHidden);
     if (FF.Gfx.resize) FF.Gfx.resize();
   }
@@ -408,9 +429,12 @@
     var cv = document.getElementById('game');
     try {
       FF.Game.boot(cv);
+      if (FF.Game.loadPrefs) FF.Game.loadPrefs();
       applyFx();
       FF.Game.start();
-      try { FF.Snd.resume(); FF.Music.playMusic('title'); } catch (e) { }
+      /* Pas de musique ici : planifier sur un AudioContext encore suspendu (autoplay iOS)
+         jouerait faux au déblocage. La musique de titre démarre au PREMIER geste réel
+         (Game.unlockAudio), seule façon de débloquer l'audio sur iPhone. */
     } catch (e) {
       console.error('Échec du démarrage', e);
       FF.Game.error = e;
@@ -421,11 +445,19 @@
     if (b) { b.classList.add('gone'); setTimeout(function () { if (b.parentNode) b.parentNode.removeChild(b); }, 800); }
   }
   Game.startOnce = start;
+  /* Débloque l'audio (geste requis iOS) puis lance la musique de titre UNE fois.
+     Idempotent : safe à brancher sur touchstart/keydown/pointerdown + clic de boot. */
+  Game.unlockAudio = function () {
+    try { if (FF.Snd && FF.Snd.unlock) FF.Snd.unlock(); } catch (e) { }
+    if (Game.audioTitle) return;
+    Game.audioTitle = true;
+    try { if (FF.Snd) FF.Snd.playMusic('title'); } catch (e) { }
+  };
   function arm() {
     var b = document.getElementById('boot-go');
-    if (b) b.addEventListener('click', function (e) { e.preventDefault(); start(); });
+    if (b) b.addEventListener('click', function (e) { e.preventDefault(); start(); Game.unlockAudio && Game.unlockAudio(); });
     ['touchstart', 'keydown', 'pointerdown'].forEach(function (ev) {
-      document.addEventListener(ev, function () { try { FF.Snd.resume(); } catch (e) { } start(); }, { passive: true });
+      document.addEventListener(ev, function () { start(); Game.unlockAudio && Game.unlockAudio(); }, { passive: true });
     });
     if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(start, 80);
     else document.addEventListener('DOMContentLoaded', function () { setTimeout(start, 80); });

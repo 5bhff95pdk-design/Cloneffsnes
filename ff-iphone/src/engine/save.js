@@ -16,24 +16,29 @@
       inv: {}, gear: {}, keys: {}, gils: 250,
       loc: { map: 'aurelia', x: 12, y: 16, dir: 'down' },
       jobs: {}, summons: {}, ship: 0, seen: {}, treasure: {},
-      settings: { encounters: 1, fx: 'auto', textSpeed: 1, shake: 1 }
+      settings: { encounters: 1, textSpeed: 1, shake: 1, scan: 1, vig: 1, padHidden: 0 }
     };
     return st;
   };
+  S.DEFAULT_SETTINGS = { encounters: 1, textSpeed: 1, shake: 1, scan: 1, vig: 1, padHidden: 0 };
 
   /* l'état vit même avant la première partie (titres, config…) */
-  var fresh0 = S.fresh();
+    var fresh0 = S.fresh();
   for (var k0 in fresh0) S[k0] = fresh0[k0];
+  /* réinitialise aux défauts puis superpose les préférences persistées (q4c.settings) */
   S.loadSettings = function () {
+    var base = S.DEFAULT_SETTINGS, out = {};
+    for (var k in base) out[k] = base[k];
     var p = U.store.get('q4c.settings', null);
-    if (p) for (var k in p) if (p[k] != null) S.settings[k] = p[k];
+    if (p) for (var k2 in p) if (p[k2] != null) out[k2] = p[k2];
+    S.settings = out;
   };
   S.saveSettings = function () { U.store.set('q4c.settings', S.settings); };
   S.has = function (k) { return U.store.get(S.KEY + k, null); };
   S.meta = function (k) {
     var o = U.store.get(S.KEY + k, null);
     if (!o) return null;
-    return { lv: o.sumLv, gils: o.gils, ch: o.ch, map: o.mapName, play: o.play, names: o.names, party: o.partyLen, date: o.date };
+    return { lv: o.sumLv, gils: o.gils, ch: o.ch, map: o.mapName, play: o.play, names: o.names, party: o.partyLen, date: o.date, cleared: !!o.cleared };
   };
   S.save = function (k) {
     var o = S.export();
@@ -42,6 +47,8 @@
     o.mapName = (D.MAPS[S.loc.map] && D.MAPS[S.loc.map].n) || S.loc.map;
     o.names = S.order.map(function (id) { return S.members[id].name; });
     o.partyLen = S.order.length;
+    /* partie terminée ? permet de proposer le New Game + (les crédits posent le flag 'ending') */
+    o.cleared = !!(S.flags && S.flags.ending);
     return U.store.set(S.KEY + k, o);
   };
   S.export = function () {
@@ -64,7 +71,9 @@
     ['ch', 'play', 'kills', 'battles', 'runs', 'steps', 'flags', 'gils', 'loc', 'jobs', 'summons', 'ship', 'seen', 'treasure', 'keys', 'inv', 'gear', 'settings', 'members', 'order', 'reserve']
       .forEach(function (kk) { if (o[kk] != null) S[kk] = o[kk]; });
     S.flags = S.flags || {}; S.inv = S.inv || {}; S.gear = S.gear || {}; S.keys = S.keys || {};
-    S.settings = S.settings || { encounters: 1, fx: 'auto', textSpeed: 1, shake: 1 };
+    /* comble les clés manquantes d'une ancienne sauvegarde avec les défauts */
+    S.settings = S.settings || {};
+    for (var kS in S.DEFAULT_SETTINGS) if (S.settings[kS] == null) S.settings[kS] = S.DEFAULT_SETTINGS[kS];
     if (FF.Game && FF.Game.onStateLoad) FF.Game.onStateLoad();
   };
   S.del = function (k) { U.store.del(S.KEY + k); };

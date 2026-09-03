@@ -238,7 +238,12 @@
     shakeT: 0, shakeMax: 1, shakeMag: 0, shakeX: 0, shakeY: 0,
     fade: 1, fadeTo: 1, fadeSpd: 1,
     flash: function (dur, col) { G.fx.flashT = dur; G.fx.flashMax = dur; G.fx.flashC = col || '#fff'; },
-    shake: function (mag, dur) { G.fx.shakeMag = mag; G.fx.shakeT = dur; G.fx.shakeMax = dur; },
+    /* respecte le réglage « Secousses » : si coupées, on ne lance aucune secousse */
+    shake: function (mag, dur) {
+      var st = FF && FF.S && FF.S.settings;
+      if (st && st.shake === 0) return;
+      G.fx.shakeMag = mag; G.fx.shakeT = dur; G.fx.shakeMax = dur;
+    },
     fadeTo_: null
   };
   G.fadeTo = function (to, spd) { G.fx.fadeTo = to; G.fx.fadeSpd = spd || 2.2; };
