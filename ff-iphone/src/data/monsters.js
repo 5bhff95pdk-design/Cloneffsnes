@@ -160,7 +160,7 @@
     acts: [{ a: 'sp', id: 'brume', w: 2 }, { a: 'atk', w: 3 }, { a: 'ab', id: 'steal', w: 2 }, { a: 'sp', id: 'gravite', w: 1, hp: .5 }],
     phases: [{ at: .5, msg: 'La Néréide appelle ses sœurs !', add: ['crane', 'crane'] }],
     intro: 'L’eau noircit ; un trésor de dents remonte vers vous.',
-    win: { it: 'clé d’azur', job: 'ranger' }, drop: { it: 'grimoire-celeste', p: .25 },
+    win: {}, drop: { it: 'grimoire-celeste', p: .25 },
     desc: 'Elle compte tout. Sauf les vivants.'
   });
   E('gelignard', 'Comte Gelignard', 'skeleton', 22, {
@@ -217,7 +217,7 @@
     counters: [{ if: 'any', a: { a: 'sp', id: 'revers' }, p: .18 }],
     phases: [{ at: .5, msg: 'L’Archonte brise son propre masque !', atk: 1.25, mag: 1.25, add: ['archive'] }],
     intro: 'La pierre se fend en quatre visages, puis en un seul.',
-    win: { it: 'nacelle', job: 'sage' }, drop: { it: 'elixir', p: .5 },
+    win: { job: 'sage' }, drop: { it: 'elixir', p: .5 },
     desc: 'Le dernier serviteur du Dévoreur.'
   });
   E('kael2', 'Kael, Brisé', 'knight', 44, {

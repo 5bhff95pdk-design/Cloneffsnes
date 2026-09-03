@@ -295,6 +295,7 @@
   D.TIER = {
     white: ['soin', 'soin2', 'soin3', 'soin4', 'protec', 'armure', 'vie', 'sanctuaire'],
     black: ['etincelle', 'feu', 'feu2', 'feu3', 'nuage', 'meduse', 'mort', 'chute'],
+    red: D.SPLIST.red.slice(),
     summon: ['salamandre', 'boree', 'taranis', 'nix', 'golem', 'kraken', 'phoenix', 'astra']
   };
 

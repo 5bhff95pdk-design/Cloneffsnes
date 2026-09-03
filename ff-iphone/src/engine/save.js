@@ -54,7 +54,9 @@
   };
   S.load = function (k) {
     var o = U.store.get(S.KEY + k, null);
-    if (!o) return false;
+    if (!o) { S.lastErr = null; return false; }
+    if (o.ver && o.ver !== S.VERSION) { S.lastErr = 'ver'; return false; }
+    S.lastErr = null;
     S.import(o);
     return true;
   };
@@ -120,10 +122,6 @@
     S.members[m.id] = m;
     if (active) { if (S.order.indexOf(m.id) < 0 && S.order.length < 4) S.order.push(m.id); else S.reserve.push(m.id); }
     else if (S.reserve.indexOf(m.id) < 0 && S.order.indexOf(m.id) < 0) S.reserve.push(m.id);
-  };
-  S.swap = function (i, j) {
-    var a = S.order[i]; S.order[i] = S.order[j]; S.order[j] = a;
-    if (i >= 4) { }
   };
   S.join = function (id, toReserve) {
     var r = S.reserve.indexOf(id); if (r >= 0) S.reserve.splice(r, 1);
