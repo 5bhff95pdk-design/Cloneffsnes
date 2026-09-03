@@ -53,7 +53,7 @@
       cmd: null, target: 0, cursor: 0, sub: null, subIdx: 0, pending: null,
       cmds: ['atk', 'mag', 'tea', 'it', 'def', 'run'],
       bg: opts.bg || (S.loc && S.loc.bg) || 'field', music: opts.music || (foes[0] && foes[0].boss ? 'boss' : 'battle'),
-      winCb: opts.onWin || null, loseCb: opts.onLose || null, noFlee: opts.noFlee || (foes[0] && foes[0].mon.noFlee),
+      winCb: opts.onWin || null, loseCb: opts.onLose || null, onEscape: opts.onEscape || null, noFlee: opts.noFlee || (foes[0] && foes[0].mon.noFlee),
       back: opts.back, result: null, ended: false, introT: 0, turns: 0, firstTime: 1,
       bossName: opts.bossName || (foes[0] && foes[0].boss ? foes[0].name : null),
       noExp: opts.noExp, script: opts.script || null, autoT: 0, ended2: 0,

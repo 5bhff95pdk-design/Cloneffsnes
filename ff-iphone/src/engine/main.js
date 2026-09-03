@@ -49,6 +49,7 @@
   Game.step = function (dt) {
     In.update(dt);
     G.updateFx(dt);
+    if (FF.S.playTick) FF.S.playTick(dt);
     if (Wo.placeT > 0) Wo.placeT = Math.max(0, Wo.placeT - dt);
     switch (Game.state) {
       case 'title': Game.updateTitle(dt); break;
@@ -196,11 +197,13 @@
     Game.prevMusic = FF.Snd.musicName();
     Game.state = 'battle';
     UI.menu = null; UI.dlg = null;
-    opts.onEscape = function () { Game.endBattle(null, 'flee'); };
-    opts.onLose = function () { Game.gameOver(); };
-    opts.onWin = function (res) { Game.endBattle(res, 'win', opts); };
+    /* on CONSERVE les callbacks de l'appelant (bossgate, scènes) :
+       le moteur les invoque APRÈS son propre traitement */
+    var ow = opts.onWin || null, ol = opts.onLose || null, oe = opts.onEscape || null;
+    opts.onWin = function (res) { Game.endBattle(res, 'win', opts); if (ow) ow(res); };
+    opts.onLose = function () { Game.gameOver(); if (ol) ol(); };
+    opts.onEscape = function () { Game.endBattle(null, 'flee'); if (oe) oe(); };
     FF.Bat.start(opts);
-    opts.onLose = function () { Game.gameOver(); };
   };
   Game.endBattle = function (res, how, opts) {
     Game.state = 'field';

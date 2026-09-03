@@ -114,7 +114,7 @@
     var jl = m.jlv[m.job] || 1;
     var list = (j.ab || []).filter(function (a, i) { return i === 0 || jl >= 2 + i * 3; });
     m.abs = list.map(function (a) { var A = D.ABILITIES[a]; return A ? Object.assign({ id: a }, A) : null; }).filter(Boolean);
-    if (m.job === 'summon' || m.job === 'sage') m.abs = m.abs.filter(function (a) { return a.id !== 'summon'; });
+    if (m.job === 'summon') m.abs = m.abs.filter(function (a) { return a.id !== 'summon'; });
     return m.abs;
   }
   P.canEquip = function (m, it) {

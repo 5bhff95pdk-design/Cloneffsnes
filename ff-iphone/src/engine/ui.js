@@ -521,7 +521,7 @@
                 UI.closeMenu();
                 FF.Game.reload();
                 UI.toast('Chargé.');
-              } else { FF.Snd.play('cancel'); UI.toast('Casier vide.'); }
+              } else { FF.Snd.play('cancel'); UI.toast(FF.S.lastErr === 'ver' ? 'Sauvegarde d’une autre version.' : 'Casier vide.'); }
             }
           }
         })

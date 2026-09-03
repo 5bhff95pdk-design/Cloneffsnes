@@ -236,7 +236,8 @@
       { t: 'npc', x: 14, y: 2, look: 'marchand', dir: 'down', say: '@aurelia_marchand' },
       { t: 'chest', x: 2, y: 13, loot: { it: 'x potion', n: 1 } },
       { t: 'chest', x: 26, y: 12, loot: { it: 'pendentif', n: 1 }, c: 'flag:nereide' },
-      { t: 'sign', x: 15, y: 10, t2: 'Débarcadère. L’eau monte la nuit.' }
+      { t: 'sign', x: 15, y: 10, t2: 'Débarcadère. L’eau monte la nuit.' },
+      { t: 'scene', x: 12, y: 10, w: 1, h: 1, scene: 'leviathan', once: 1, c: 'flag:nereide' }
     ]
   });
 
@@ -303,8 +304,7 @@
       { t: 'save', x: 11, y: 5 },
       { t: 'npc', x: 8, y: 8, look: 'forgeron', dir: 'down', say: '@cendre_forgeron' },
       { t: 'npc', x: 18, y: 6, look: 'soldat', dir: 'left', say: '@final_vieux' },
-      { t: 'chest', x: 27, y: 10, loot: { it: 'ex-calamite', n: 1 } },
-      { t: 'scene', x: 13, y: 5, w: 1, h: 1, scene: 'cendrix', once: 1, c: 'flag:boree' }
+      { t: 'chest', x: 27, y: 10, loot: { it: 'ex-calamite', n: 1 } }
     ]
   });
 
@@ -489,18 +489,6 @@
 
   /* tables de rencontres par carte (donjons) : voir DUNGEONS.list */
   D.ENC_RATE = 0.115;
-
-  /* position de sortie des intérieurs (coordonnées dans la ville) */
-  var INNBACK = {
-    aurelia: { x: 1, y: 11 }, pyrite: { x: 3, y: 4 }, azur: { x: 25, y: 7 }, givre: { x: 3, y: 4 }, cendre: { x: 3, y: 3 }
-  };
-  var SHOPBACK = {
-    aurelia: { x: 26, y: 11 }, pyrite: { x: 25, y: 4 }, azur: { x: 2, y: 4 }, givre: { x: 25, y: 4 }, cendre: { x: 21, y: 3 }
-  };
-  var ARMSBACK = {
-    aurelia: { x: 9, y: 8 }, pyrite: { x: 12, y: 6 }, azur: { x: 8, y: 10 }, givre: { x: 3, y: 8 }, cendre: { x: 21, y: 3 }
-  };
-  D.MAPS_BACK = { INNBACK: INNBACK, SHOPBACK: SHOPBACK, ARMSBACK: ARMSBACK };
 
   /* ============================================================
      Utilitaires de carte

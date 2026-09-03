@@ -1,0 +1,16 @@
+{
+  "name": "Les Quatre Cristaux",
+  "short_name": "Cristaux",
+  "description": "Les Quatre Cristaux — RPG 16-bit jouable hors-ligne, sauvegardes locales.",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05070f",
+  "theme_color": "#05070f",
+  "icons": [
+    { "src": "assets/icon-180.png", "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

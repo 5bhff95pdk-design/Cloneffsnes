@@ -200,7 +200,7 @@
         break;
       }
       case 'scene': {
-        if (e.once && S.f('sc_' + e.scene)) { if (D.SCENES[e.scene]) { } else return; }
+        if (e.once && S.f('sc_' + e.scene)) return;
         if (e.c && !FF.Cond(e.c, S)) return;
         if (e.once) S.set('sc_' + e.scene);
         Wo.play(e.scene);
@@ -212,6 +212,7 @@
         if (e.c && !FF.Cond(e.c, S)) return;
         FF.Game.battle({ foes: e.foes, bg: m.bg, music: 'boss', bossName: e.name, noFlee: 1, onWin: function () {
           S.set('boss_' + (e.scene || e.name));
+          if (e.scene) S.set('sc_' + e.scene);
           if (e.scene && D.SCENES[e.scene]) Wo.play(e.scene);
           else { FF.Game.afterBoss(e); }
         } });
@@ -372,7 +373,10 @@
       c.wait -= dt;
       if (c.wait > 0) return;
       c.wait = 0;
-      if (c.pause) { c.pause = false; Wo.cutStep(); return; }
+      /* à l'expiration du wait, la scène REPREND (étapes map/wait/fade sans pause) */
+      if (c.pause) c.pause = false;
+      Wo.cutStep();
+      return;
     }
     if (FF.UI.dlg) return;   /* attend la fin du dialogue */
     if (FF.In.pressed('a') && c.autoAdvance) { c.autoAdvance = false; Wo.cutStep(); }
@@ -424,7 +428,6 @@
         S.addMember(m2, !S.reserve.length || S.order.length < 4);
         S.join(s.who);
         FF.P.healFull(S.members[s.who]);
-        S.order.forEach(function (id3, idx) { });
         Wo.cutStep(); break;
       }
       case 'leave': S.leave(s.who); Wo.cutStep(); break;

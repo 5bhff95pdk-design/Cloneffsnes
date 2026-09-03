@@ -42,6 +42,12 @@
       bias: { agi: .3, int: .4, esp: .3, for: -.3 },
       look: { skin: '#e6bc90', hair: { c: '#a8451f', style: 'pony' }, eye: '#3f6a4a', cloth: '#6a4fc9', cloth2: '#4a357f', armor: 'light', weapon: 'bow', hat: 'hat', hatc: '#4a357f' },
       bio: 'Il compose l’épopée pendant que les autres la vivent. Il a perdu son instrument dans la neige.'
+    },
+    vaux: {
+      n: 'Vaux', t: 'Chancelier de Pyrite',
+      bias: { int: .5, agi: .3, for: .2, vit: -.2 },
+      look: { skin: '#d8b090', hair: { c: '#c8c2b0', style: 'long' }, eye: '#5a7a4a', cloth: '#4a6a8a', cloth2: '#2f4a66', hat: 'none', armor: 'robe', weapon: 'rod', metal: '#b0c8e0', gem: '#ffd257' },
+      bio: 'Il a acheté chaque pont, chaque mine et chaque serment. Le dernier à vendre sera peut-être lui.'
     }
   };
 
@@ -169,20 +175,19 @@
     { s: 'end' }
   ]);
 
+  /* le combat du boss se joue au bossgate (sa récompense : clé rouillée) ;
+     la scène ne fait que la narration post-combat */
   scene('sanctuaire1', [
     { s: 'say', t: 'Sanctuaire de la Sève. Le cristal bat comme un cœur malade.' },
-    { s: 'battle', foes: ['croc-boue'], bg: 'cave', music: 'boss', on: 'win:after' },
-    { s: 'label', k: 'after' },
     { s: 'say', who: 'myrelle', t: 'Il respire encore ! Mais regardez — la racine est noire, on l’a empoisonnée.' },
-    { s: 'give', it: 'clé rouillée', n: 1 },
     { s: 'flag', k: 'sanctuaire' },
     { s: 'chapter', n: 1.5 },
     { s: 'heal' },
     { s: 'say', who: 'arno', t: 'Cette clé… c’est celle de la porte nord. Kael garde la porte nord.' },
     { s: 'map', to: 'aurelia', x: 12, y: 17 },
-    { s: 'scene', to: 'dlg:trahison' },
     { s: 'end' }
   ]);
+  /* la trahison de Kael se déclenche sur la tuile de la porte nord (15,17) d’Aurélia */
 
   scene('trahison', [
     { s: 'say', t: 'Porte nord. La herse est levée, les gardes sont à genoux.' },
@@ -211,8 +216,6 @@
     { s: 'end' }
   ]);
   scene('gargouille', [
-    { s: 'battle', foes: ['gargouille'], bg: 'mine', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'say', who: 'gault', t: 'Elle gardait les hommes, pas l’or. Regardez : les cages étaient pleines.' },
     { s: 'heal' },
     { s: 'flag', k: 'gargouille' },
@@ -220,8 +223,6 @@
   ]);
   scene('vaux', [
     { s: 'say', t: 'Salle du soufflet. Vaux compte ses cailloux sur une table de marbre.' },
-    { s: 'battle', foes: ['vaux', 'impveine'], bg: 'mine', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'say', who: 'vaux', t: 'Un cristal, quatre seigneurs… Vous croyez que je choisis le camp qui gagne ? Je choisis celui qui paie.' },
     { s: 'give', it: 'clé d’azur', n: 1 },
     { s: 'flag', k: 'vaux' },
@@ -231,8 +232,6 @@
     { s: 'end' }
   ]);
   scene('epave', [
-    { s: 'battle', foes: ['nereide'], bg: 'sea', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'say', who: 'sica', t: 'Elle avait ma bague. Celle que je volais à tout le port. Elle me l’a rendue, c’est pire.' },
     { s: 'flag', k: 'nereide' },
     { s: 'join', who: 'lys' },
@@ -254,18 +253,13 @@
     { s: 'end' }
   ]);
   scene('gelignard', [
-    { s: 'battle', foes: ['gelignard'], bg: 'ice', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'say', who: 'gault', t: 'Le bal est fini. Trois cents ans, et le dernier morceau n’a jamais été joué.' },
     { s: 'flag', k: 'gelignard' },
-    { s: 'job', j: 'monk' },
     { s: 'heal' },
     { s: 'end' }
   ]);
   scene('boree', [
     { s: 'say', t: 'Pic de Borée. Quatre chaînes noires tiennent un esprit du vent au sommet.' },
-    { s: 'battle', foes: ['borhee'], bg: 'sky', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'summon', k: 'boree' },
     { s: 'say', who: 'lys', t: 'Il nous remercie en nous arrachant les cheveux. C’est sa façon.' },
     { s: 'flag', k: 'boree' },
@@ -274,26 +268,19 @@
     { s: 'end' }
   ]);
   scene('cendrix', [
-    { s: 'battle', foes: ['cendrix'], bg: 'lava', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'say', who: 'forgeron', t: 'Le Sceau des Quatre est dans la nacelle. La nacelle est dans le ciel. Vous avez les deux mains libres, maintenant.' },
-    { s: 'give', it: 'sceau', n: 1 },
     { s: 'give', it: 'nacelle', n: 1 },
     { s: 'ship' },
     { s: 'flag', k: 'cendrix' },
-    { s: 'job', j: 'dragoon' },
     { s: 'chapter', n: 6 },
     { s: 'heal' },
     { s: 'end' }
   ]);
   scene('archonte', [
     { s: 'say', t: 'Le sommet de la Tour Obsidienne. Quatre visages de pierre vous tournent autour.' },
-    { s: 'battle', foes: ['archonte'], bg: 'tower', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'say', who: 'myrelle', t: 'Les quatre cristaux sont là. Ils sont… dans son ventre. Il les a bus.' },
     { s: 'heal' },
     { s: 'flag', k: 'archonte' },
-    { s: 'job', j: 'sage' },
     { s: 'end' }
   ]);
   scene('kael_final', [
@@ -309,8 +296,6 @@
   ]);
   scene('final', [
     { s: 'say', t: 'Nyxaré se lève. La lumière du monde tient dans quatre mains fermées.' },
-    { s: 'battle', foes: ['nyxare'], bg: 'tower', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'say', t: 'Le Dévoreur se plie, se fissure, et rend ce qu’il avait. La lumière remonte comme une marée.' },
     { s: 'fade', to: 1 },
     { s: 'say', t: 'Au printemps, Aurélia a replanté les vergers autour du Sanctuaire.\nOn a gravé quatre noms sur la porte nord. Le cinquième a été ajouté plus tard, à la demande générale.' },
@@ -320,12 +305,9 @@
     { s: 'end' }
   ]);
   scene('dream', [
-    { s: 'battle', foes: ['dreamer'], bg: 'dream', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' }, { s: 'heal' }, { s: 'end' }
+    { s: 'heal' }, { s: 'end' }
   ]);
   scene('secret', [
-    { s: 'battle', foes: ['momor'], bg: 'dream', music: 'boss', on: 'win:a' },
-    { s: 'label', k: 'a' },
     { s: 'say', t: 'Momon Étoillé hoche lentement la tête. Il vous donne une couleur qu’aucun nom ne porte.' },
     { s: 'give', it: 'elixir', n: 3 }, { s: 'flag', k: 'secret' }, { s: 'heal' }, { s: 'end' }
   ]);
