@@ -21,19 +21,55 @@
     return st;
   };
   S.DEFAULT_SETTINGS = { encounters: 1, textSpeed: 1, shake: 1, scan: 1, vig: 1, padHidden: 0 };
+  S.DEFAULT_AUDIO = { muted: false, vol: 0.6, musVol: 0.5, sfxVol: 0.9 };
 
   /* l'état vit même avant la première partie (titres, config…) */
     var fresh0 = S.fresh();
   for (var k0 in fresh0) S[k0] = fresh0[k0];
-  /* réinitialise aux défauts puis superpose les préférences persistées (q4c.settings) */
-  S.loadSettings = function () {
-    var base = S.DEFAULT_SETTINGS, out = {};
-    for (var k in base) out[k] = base[k];
-    var p = U.store.get('q4c.settings', null);
-    if (p) for (var k2 in p) if (p[k2] != null) out[k2] = p[k2];
-    S.settings = out;
+
+  /* ---------- Prefs : un seul blob q4c.prefs (migre q4c.settings / q4c.audio) ---------- */
+  var Prefs = FF.Prefs = {};
+  Prefs.KEY = 'q4c.prefs';
+  function prefsMerge(base, src) {
+    var out = {}, k;
+    for (k in base) out[k] = base[k];
+    if (src) for (k in src) if (src[k] != null) out[k] = src[k];
+    return out;
+  }
+  Prefs.load = function () {
+    var uni = U.store.get(Prefs.KEY, null);
+    var set = prefsMerge(S.DEFAULT_SETTINGS, (uni && uni.settings) || U.store.get('q4c.settings', null));
+    var aud = prefsMerge(S.DEFAULT_AUDIO, (uni && uni.audio) || U.store.get('q4c.audio', null));
+    S.settings = set;
+    S.audio = aud;
+    return { settings: set, audio: aud };
   };
-  S.saveSettings = function () { U.store.set('q4c.settings', S.settings); };
+  Prefs.save = function () {
+    var aud = S.audio || {};
+    if (FF.Snd && FF.Snd.settings) {
+      aud = {
+        muted: !!FF.Snd.settings.muted,
+        vol: FF.Snd.settings.vol != null ? FF.Snd.settings.vol : S.DEFAULT_AUDIO.vol,
+        musVol: FF.Snd.settings.musVol != null ? FF.Snd.settings.musVol : S.DEFAULT_AUDIO.musVol,
+        sfxVol: FF.Snd.settings.sfxVol != null ? FF.Snd.settings.sfxVol : S.DEFAULT_AUDIO.sfxVol
+      };
+      S.audio = aud;
+    }
+    var blob = { settings: S.settings || prefsMerge(S.DEFAULT_SETTINGS, null), audio: aud };
+    U.store.set(Prefs.KEY, blob);
+    /* miroir legacy : Phase A/B et vieilles installs lisent encore ces clés */
+    U.store.set('q4c.settings', blob.settings);
+    U.store.set('q4c.audio', blob.audio);
+    return blob;
+  };
+  Prefs.apply = function () {
+    Prefs.load();
+    if (FF.Snd && FF.Snd.applyPrefs) FF.Snd.applyPrefs(S.audio);
+    if (FF.Game && FF.Game.applyFx) FF.Game.applyFx();
+  };
+
+  S.loadSettings = function () { Prefs.load(); };
+  S.saveSettings = function () { Prefs.save(); };
   S.has = function (k) { return U.store.get(S.KEY + k, null); };
   S.meta = function (k) {
     var o = U.store.get(S.KEY + k, null);

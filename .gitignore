@@ -1,1 +1,7 @@
 node_modules/
+workspace-*.zip
+*.zip
+.apt.log
+.pw-install.log
+.pwtest.js
+.sudo_as_admin_successful

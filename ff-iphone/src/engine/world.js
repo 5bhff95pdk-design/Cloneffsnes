@@ -36,6 +36,7 @@
     G.resetParts();
     if (m.music && m.music !== FF.Snd.musicName()) FF.Snd.playMusic(m.music);
     S.loc.x = p.gx; S.loc.y = p.gy; S.loc.dir = p.dir;
+    Wo.steps = 0; /* grâce : pas de rencontre dès la 1re case d'une carte */
     return m;
   };
 
@@ -68,7 +69,16 @@
     var p = Wo.p, m = Wo.map;
     if (!p || !m) return;
     p.t += dt;
-    if (Wo.cut) { Wo.runCut(dt); return; }
+    if (Wo.cut) {
+      Wo.runCut(dt);
+      /* filet : cutteur inerte (ni wait, ni pause, ni dialogue) → clôturer
+         (régression crédits / étape oubliée de cutStep). */
+      if (Wo.cut && !Wo.cut.pause && !(Wo.cut.wait > 0) && !(FF.UI && FF.UI.dlg) && !Wo.cut.battleWait) {
+        Wo.cut._idle = (Wo.cut._idle || 0) + dt;
+        if (Wo.cut._idle > 1) Wo.cut = null;
+      } else if (Wo.cut) Wo.cut._idle = 0;
+      return;
+    }
     if (FF.Game.modal) return;
     var speed = Wo.mode === 'ship' ? 7.2 : 3.5;
     if (S.settings && S.settings.fast) speed *= 1.4;
@@ -110,18 +120,7 @@
     var k = Wo.mode === 'ship' ? 4 : 8;
     Wo.cam.x = U.approach(Wo.cam.x, tx, k * dt * Math.max(1, Math.abs(tx - Wo.cam.x)));
     Wo.cam.y = U.approach(Wo.cam.y, ty, k * dt * Math.max(1, Math.abs(ty - Wo.cam.y)));
-    /* pas & rencontres */
-    if (!p.moving) { }
     if (Wo.encCd > 0) Wo.encCd -= dt;
-    if (!p.moving && Wo.mode === 'foot' && D.ENC_RATE && Wo.map.enc && Wo.map.enc.list && Wo.map.enc.list.length && (S.settings.encounters !== 0) && !FF.Game.noEnc) {
-      Wo.steps++;
-      S.steps++;
-      var rate = (Wo.map.enc.rate || D.ENC_RATE) * (S.f('noenc') ? 0 : 1);
-      if (Wo.steps > 14 && Math.random() < rate) {
-        Wo.steps = 0;
-        Wo.triggerEncounter();
-      }
-    }
     /* particules d'ambiance */
     if (m.bg === 'lava' && Math.random() < .25) G.burst(Wo.cam.x + Math.random() * G.W, Wo.cam.y + G.H - 4, 1, { c: '#ff9a3d', c2: '#ffe066', vy: -22, g: -6, life: 1.6, s: 1, sp: 0, dir: 0, jit: 4 });
     if (m.theme === 'ice' && Math.random() < .35) G.p(Wo.cam.x + Math.random() * G.W, Wo.cam.y + Math.random() * G.H, { vy: 12, vx: -6, life: 2, c: '#ffffff', s: 1 });
@@ -137,14 +136,42 @@
     var p = Wo.p, m = Wo.map;
     S.loc.x = p.gx; S.loc.y = p.gy;
     var e = D.entAt(m.id, p.gx, p.gy);
-    if (e && (e.t === 'door' || e.t === 'stairs' || e.t === 'stairsback' || e.t === 'scene' || e.t === 'bossgate' || e.t === 'locked' || e.t === 'ship' || e.t === 'save')) Wo.tryInteract(e, null, true);
-    /* dégâts de lave */
+    if (e && (e.t === 'door' || e.t === 'stairs' || e.t === 'stairsback' || e.t === 'scene' || e.t === 'bossgate' || e.t === 'locked' || e.t === 'ship' || e.t === 'save')) {
+      Wo.tryInteract(e, null, true);
+      return;
+    }
     var ch = tile(m, p.gx, p.gy);
     var th = G.tiles(m.theme);
     if (th[ch] && th[ch].dmg && Wo.mode !== 'ship') {
       S.party().forEach(function (mm) { if (mm && mm.hp > 0) mm.hp = Math.max(1, mm.hp - (th[ch].dmg | 0)); });
       FF.Snd.play('fire'); G.fx.flash(.2, '#ff7a3d');
     }
+    Wo.tryEncounter();
+  };
+  Wo.canEncounter = function () {
+    if (!Wo.map || Wo.mode !== 'foot') return false;
+    if (FF.Game && FF.Game.noEnc) return false;
+    if (S.settings && S.settings.encounters === 0) return false;
+    if (S.f('noenc')) return false;
+    var enc = Wo.map.enc;
+    if (!enc) return false;
+    if (enc.list && enc.list.length) return true;
+    if (enc.zones && enc.zones.length) return true;
+    if (enc.sea && enc.sea.length) return true;
+    return false;
+  };
+  Wo.tryEncounter = function () {
+    if (!Wo.canEncounter()) return false;
+    Wo.steps++;
+    S.steps++;
+    var enc = Wo.map.enc;
+    var rate = (enc && enc.rate != null) ? enc.rate : (D.ENC_RATE || 0);
+    if (Wo.steps > 14 && Math.random() < rate) {
+      Wo.steps = 0;
+      Wo.triggerEncounter();
+      return true;
+    }
+    return false;
   };
 
   /* ---------------- interactions ---------------- */
@@ -458,7 +485,11 @@
         var cb2 = c.cb; Wo.cut = null; if (cb2) cb2();
         break;
       }
-      case 'credits': FF.Game.credits(); break;
+      case 'credits':
+        /* Game.credits() clôt le cutteur, pose ending et sauve :
+           sans ça, wait=0/pause=false → runCut ne reprend jamais et le joueur gèle. */
+        FF.Game.credits();
+        break;
       default: Wo.cutStep();
     }
     /* après une scène 'say', la reprise se fait quand le dialogue se ferme */
